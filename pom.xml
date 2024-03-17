@@ -40,6 +40,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -102,9 +103,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
-		</plugins>Step 8: Below is the code for the application.properties file
-
-
+		</plugins>
 	</build>
 
 </project>
