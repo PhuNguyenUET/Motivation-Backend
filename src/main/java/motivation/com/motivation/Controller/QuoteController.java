@@ -1,16 +1,14 @@
 package motivation.com.motivation.Controller;
 
 import jakarta.validation.Valid;
-import motivation.com.motivation.DTO.FavouriteQuoteDTO;
+import motivation.com.motivation.DTO.DisplayQuoteDTO;
 import motivation.com.motivation.DTO.NotificationQuoteDTO;
 import motivation.com.motivation.Model.Quote;
-import motivation.com.motivation.Model.User;
 import motivation.com.motivation.Model.UserQuote;
 import motivation.com.motivation.Service.QuoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,21 +30,21 @@ public class QuoteController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<UserQuote> updateQuote(@RequestBody @Valid UserQuote userQuote, @PathVariable("id") int userQuoteId) {
-        UserQuote q = quoteService.updateUserQuote(userQuote, userQuoteId);
+    public ResponseEntity<UserQuote> updateQuote(@RequestBody @Valid UserQuote userQuote, @PathVariable("id") int quoteId) {
+        UserQuote q = quoteService.updateUserQuote(userQuote, quoteId);
         return ResponseEntity.status(HttpStatus.OK).body(q);
     }
 
-    @PutMapping(path = "/changeFavouriteQuote")
-    public ResponseEntity<String> changeFavouriteQuote(@RequestParam int userId, @RequestParam int quoteId) {
-        quoteService.changeFavouriteQuote(quoteId, userId);
+    @PutMapping(path = "/changeFavouriteQuote/{userId}")
+    public ResponseEntity<String> changeFavouriteQuote(@RequestBody @Valid DisplayQuoteDTO quoteDTO, @PathVariable("userId") int userId) {
+        quoteService.changeFavouriteQuote(quoteDTO, userId);
         return ResponseEntity.status(HttpStatus.OK).body("Favourite list updated");
     }
 
-    @PutMapping(path = "/changeFavouriteQuote/userQuote/{id}")
-    public ResponseEntity<String> changeFavouriteUserQuote(@PathVariable("id") int userQuoteId) {
-        quoteService.changeFavouriteUserQuote(userQuoteId);
-        return ResponseEntity.status(HttpStatus.OK).body("Favourite list updated");
+    @DeleteMapping(path= "/delete/userQuotes/{id}")
+    public ResponseEntity<String> deleteUserQuotes(@PathVariable("id") int id) {
+        quoteService.deleteUserQuoteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
     }
 
     @GetMapping(path = "/getQuotes/{category}")
@@ -62,9 +60,9 @@ public class QuoteController {
     }
 
     @GetMapping(path = "/getQuotes/favourites/{id}")
-    public ResponseEntity<List<FavouriteQuoteDTO>> getFavouriteQuotes(@PathVariable("id") int userId) {
-        List<FavouriteQuoteDTO> favouriteQuoteDTOS = quoteService.getAllFavouriteQuotes(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(favouriteQuoteDTOS);
+    public ResponseEntity<List<DisplayQuoteDTO>> getFavouriteQuotes(@PathVariable("id") int userId) {
+        List<DisplayQuoteDTO> displayQuoteDTOS = quoteService.getAllFavouriteQuotes(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(displayQuoteDTOS);
     }
 
     @GetMapping(path = "/getRandomQuote")
@@ -95,5 +93,11 @@ public class QuoteController {
     public ResponseEntity<Integer> getNumberOfFavourites(@PathVariable("id") int userId) {
         int num = quoteService.getNumberOfFavourites(userId);
         return ResponseEntity.status(HttpStatus.OK).body(num);
+    }
+
+    @GetMapping(path = "/getQuotes/userCategory/{id}")
+    public ResponseEntity<List<DisplayQuoteDTO>> getQuotesFromUserCategory(@PathVariable("id") int categoryId) {
+        List<DisplayQuoteDTO> quotes = quoteService.getQuotesByUserCategory(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(quotes);
     }
 }

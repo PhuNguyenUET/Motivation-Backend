@@ -26,6 +26,10 @@ public class UserQuote {
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "quotes")
+    List<UserCategory> addedCategories;
+
     public int getId() {
         return id;
     }
@@ -48,5 +52,9 @@ public class UserQuote {
 
     public void changeFavourite() {
         isFavourite = !isFavourite;
+    }
+
+    public List<UserCategory> getAddedCategories() {
+        return addedCategories;
     }
 }

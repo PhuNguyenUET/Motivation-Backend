@@ -1,19 +1,15 @@
 package motivation.com.motivation.Service;
 
-import motivation.com.motivation.DTO.FavouriteQuoteDTO;
+import motivation.com.motivation.DTO.DisplayQuoteDTO;
 import motivation.com.motivation.DTO.NotificationQuoteDTO;
 import motivation.com.motivation.Model.*;
-import motivation.com.motivation.Repository.CategoryRepository;
-import motivation.com.motivation.Repository.QuoteRepository;
-import motivation.com.motivation.Repository.UserQuoteRepository;
-import motivation.com.motivation.Repository.UserRepository;
+import motivation.com.motivation.Repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,7 +18,12 @@ public class QuoteService {
     private CategoryRepository categoryRepository;
     private UserQuoteRepository userQuoteRepository;
     private UserRepository userRepository;
+    private UserCategoryRepository userCategoryRepository;
 
+    @Autowired
+    public void setUserCategoryRepository(UserCategoryRepository userCategoryRepository) {
+        this.userCategoryRepository = userCategoryRepository;
+    }
     @Autowired
     private ModelMapper modelMapper;
 
@@ -42,7 +43,7 @@ public class QuoteService {
     }
 
     @Autowired
-    public void setUserCategory(UserRepository userRepository) {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -66,29 +67,29 @@ public class QuoteService {
         return userQuoteRepository.save(quote);
     }
 
-    public void changeFavouriteQuote(int quoteId, int userId) {
-        Optional<User> u = userRepository.findById(userId);
-        //TODO: Implement exceptions
-        User user = u.get();
-        boolean isFav = user.checkIsFavouriteQuote(quoteId);
-        Optional<Quote> q = quoteRepository.findById(quoteId);
-        //TODO: Implement exceptions
-        Quote quote = q.get();
-        if (isFav) {
-            user.removeFavouriteQuote(quote);
-            userRepository.save(user);
+    public void changeFavouriteQuote(DisplayQuoteDTO displayQuote, int userId) {
+        if(!displayQuote.isUserCreated()) {
+            Optional<User> u = userRepository.findById(userId);
+            //TODO: Implement exceptions
+            User user = u.get();
+            boolean isFav = user.checkIsFavouriteQuote(displayQuote.getId());
+            Optional<Quote> q = quoteRepository.findById(displayQuote.getId());
+            //TODO: Implement exceptions
+            Quote quote = q.get();
+            if (isFav) {
+                user.removeFavouriteQuote(quote);
+                userRepository.save(user);
+            } else {
+                user.addFavouriteQuote(quote);
+                userRepository.save(user);
+            }
         } else {
-            user.addFavouriteQuote(quote);
-            userRepository.save(user);
+            Optional<UserQuote> q = userQuoteRepository.findById(displayQuote.getId());
+            //TODO: Implement when q is empty using exceptions
+            UserQuote quote = q.get();
+            quote.changeFavourite();
+            userQuoteRepository.save(quote);
         }
-    }
-
-    public void changeFavouriteUserQuote(int userQuoteId) {
-        Optional<UserQuote> q = userQuoteRepository.findById(userQuoteId);
-        //TODO: Implement when q is empty using exceptions
-        UserQuote quote = q.get();
-        quote.changeFavourite();
-        userQuoteRepository.save(quote);
     }
 
     public List<Quote> getQuotesByCategory(String category) {
@@ -107,13 +108,13 @@ public class QuoteService {
         return quoteRepository.get100RandomQuotes();
     }
 
-    public List<FavouriteQuoteDTO> getAllFavouriteQuotes(int userId) {
-        List<FavouriteQuoteDTO> favouriteList = new ArrayList<>();
+    public List<DisplayQuoteDTO> getAllFavouriteQuotes(int userId) {
+        List<DisplayQuoteDTO> favouriteList = new ArrayList<>();
         Optional<User> u = userRepository.findById(userId);
         //TODO: Implement exceptions
         User user = u.get();
-        List<FavouriteQuoteDTO> quoteList = user.getFavouriteQuotes().stream().map(q -> this.modelMapper.map(q, FavouriteQuoteDTO.class)).toList();
-        List<FavouriteQuoteDTO> userQuoteList = userQuoteRepository.findByUserIdAndIsFavourite(userId, true).stream().map(q -> this.modelMapper.map(q, FavouriteQuoteDTO.class)).toList();
+        List<DisplayQuoteDTO> quoteList = user.getFavouriteQuotes().stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
+        List<DisplayQuoteDTO> userQuoteList = userQuoteRepository.findByUserIdAndIsFavourite(userId, true).stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
         favouriteList.addAll(userQuoteList);
         favouriteList.addAll(quoteList);
         return favouriteList;
@@ -140,7 +141,7 @@ public class QuoteService {
 
     public UserQuote getUserQuoteFromId(int id) {
         Optional<UserQuote> q = userQuoteRepository.findById(id);
-        //TODO: Implement excaption
+        //TODO: Implement exception
         return q.get();
     }
 
@@ -156,6 +157,18 @@ public class QuoteService {
             Quote q = quoteRepository.getRandomQuoteFromCategoryId(c.getId());
             return this.modelMapper.map(q, NotificationQuoteDTO.class);
         }
+    }
+
+    public List<DisplayQuoteDTO> getQuotesByUserCategory(int categoryId) {
+        Optional<UserCategory> c = userCategoryRepository.findById(categoryId);
+        //TODO: Implement exceptions
+        UserCategory userCategory = c.get();
+        List<DisplayQuoteDTO> quotes = new ArrayList<>();
+        List<DisplayQuoteDTO> quoteList = userCategory.getQuotes().stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
+        List<DisplayQuoteDTO> userQuoteList = userCategory.getUserQuotes().stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
+        quotes.addAll(userQuoteList);
+        quotes.addAll(quoteList);
+        return quotes;
     }
 }
 

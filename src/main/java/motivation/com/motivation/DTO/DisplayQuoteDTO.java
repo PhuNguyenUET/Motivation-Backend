@@ -1,5 +1,6 @@
 package motivation.com.motivation.DTO;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FavouriteQuoteDTO {
+public class DisplayQuoteDTO {
     private int id;
+    @NotEmpty
     private String quote;
     private String author;
-
     private boolean isUserCreated = false;
 
     public int getId() {

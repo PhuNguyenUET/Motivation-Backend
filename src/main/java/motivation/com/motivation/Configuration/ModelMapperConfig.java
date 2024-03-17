@@ -1,42 +1,40 @@
 package motivation.com.motivation.Configuration;
 
-import motivation.com.motivation.DTO.FavouriteQuoteDTO;
+import motivation.com.motivation.DTO.DisplayQuoteDTO;
 import motivation.com.motivation.Model.Quote;
 import motivation.com.motivation.Model.UserQuote;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ui.ModelMap;
 
 @Configuration
 public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapperBean() {
         ModelMapper modelMapper = new ModelMapper();
-        Converter<Quote, FavouriteQuoteDTO> quoteDTOConverter = new Converter<Quote, FavouriteQuoteDTO>() {
+        Converter<Quote, DisplayQuoteDTO> quoteDTOConverter = new Converter<Quote, DisplayQuoteDTO>() {
             @Override
-            public FavouriteQuoteDTO convert(MappingContext<Quote, FavouriteQuoteDTO> context) {
+            public DisplayQuoteDTO convert(MappingContext<Quote, DisplayQuoteDTO> context) {
                 Quote quote = context.getSource();
-                FavouriteQuoteDTO favouriteQuoteDTO = context.getDestination();
-                favouriteQuoteDTO.setQuote(quote.getQuote());
-                favouriteQuoteDTO.setAuthor(quote.getAuthor());
-                favouriteQuoteDTO.setUserCreated(false);
-                return favouriteQuoteDTO;
+                DisplayQuoteDTO displayQuoteDTO = context.getDestination();
+                displayQuoteDTO.setQuote(quote.getQuote());
+                displayQuoteDTO.setAuthor(quote.getAuthor());
+                displayQuoteDTO.setUserCreated(false);
+                return displayQuoteDTO;
             }
         };
         modelMapper.addConverter(quoteDTOConverter);
-        Converter<UserQuote, FavouriteQuoteDTO> userQuoteFavouriteQuoteDTOConverter = new Converter<UserQuote, FavouriteQuoteDTO>() {
+        Converter<UserQuote, DisplayQuoteDTO> userQuoteFavouriteQuoteDTOConverter = new Converter<UserQuote, DisplayQuoteDTO>() {
             @Override
-            public FavouriteQuoteDTO convert(MappingContext<UserQuote, FavouriteQuoteDTO> context) {
+            public DisplayQuoteDTO convert(MappingContext<UserQuote, DisplayQuoteDTO> context) {
                 UserQuote quote = context.getSource();
-                FavouriteQuoteDTO favouriteQuoteDTO = context.getDestination();
-                favouriteQuoteDTO.setQuote(quote.getQuote());
-                favouriteQuoteDTO.setAuthor(quote.getAuthor());
-                favouriteQuoteDTO.setUserCreated(true);
-                return favouriteQuoteDTO;
+                DisplayQuoteDTO displayQuoteDTO = context.getDestination();
+                displayQuoteDTO.setQuote(quote.getQuote());
+                displayQuoteDTO.setAuthor(quote.getAuthor());
+                displayQuoteDTO.setUserCreated(true);
+                return displayQuoteDTO;
             }
         };
         modelMapper.addConverter(userQuoteFavouriteQuoteDTOConverter);

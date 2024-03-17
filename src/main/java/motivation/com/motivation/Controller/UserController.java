@@ -24,4 +24,10 @@ public class UserController {
         User u = userService.insertUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(u);
     }
+
+    @PutMapping(path = "/update")
+    public ResponseEntity<User> updateUser(@RequestBody @Valid User user) {
+        User u = userService.updateUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(u);
+    }
 }

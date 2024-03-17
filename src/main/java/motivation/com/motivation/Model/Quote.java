@@ -29,6 +29,9 @@ public class Quote {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "favouriteQuotes")
     List<User> likedUsers;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "quotes")
+    List<UserCategory> addedCategories;
+
     public int getId() {
         return id;
     }
@@ -47,5 +50,9 @@ public class Quote {
 
     public List<User> getLikedUsers() {
         return likedUsers;
+    }
+
+    public List<UserCategory> getAddedCategories() {
+        return addedCategories;
     }
 }
