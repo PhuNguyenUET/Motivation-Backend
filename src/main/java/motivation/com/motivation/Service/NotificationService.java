@@ -1,5 +1,9 @@
 package motivation.com.motivation.Service;
 
+import motivation.com.motivation.Exceptions.NoSuchNotificationInfoExistsException;
+import motivation.com.motivation.Exceptions.NoSuchUserCategoryExistsException;
+import motivation.com.motivation.Exceptions.NotificationInfoAlreadyExistsException;
+import motivation.com.motivation.Exceptions.UserAlreadyExistsException;
 import motivation.com.motivation.Model.Category;
 import motivation.com.motivation.Model.NotificationInfo;
 import motivation.com.motivation.Model.User;
@@ -26,12 +30,18 @@ public class NotificationService {
     }
 
     public NotificationInfo insertNotificationInfo(NotificationInfo notificationInfo) {
+        Optional<NotificationInfo> info = notificationInfoRepository.findById(notificationInfo.getId());
+        if(info.isPresent()) {
+            throw new NotificationInfoAlreadyExistsException("Notification info with id " + notificationInfo.getId() + " already exists");
+        }
         return notificationInfoRepository.save(notificationInfo);
     }
 
     public NotificationInfo updateNotificationInfo(NotificationInfo notificationInfo) {
         Optional<NotificationInfo> info = notificationInfoRepository.findById(notificationInfo.getId());
-        // TODO: Implement exceptions
+        if(info.isEmpty()) {
+            throw new NoSuchNotificationInfoExistsException("No notification info with id " + notificationInfo.getId() + " found");
+        }
         return notificationInfoRepository.save(notificationInfo);
     }
 

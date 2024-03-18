@@ -1,5 +1,7 @@
 package motivation.com.motivation.Service;
 
+import motivation.com.motivation.Exceptions.NoSuchCategoryExistsException;
+import motivation.com.motivation.Exceptions.NoSuchUserCategoryExistsException;
 import motivation.com.motivation.Model.Category;
 import motivation.com.motivation.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,9 @@ public class CategoryService {
             return new Category(0, "general");
         }
         Optional<Category> category = categoryRepository.findById(cateId);
-        //TODO: Implement exceptions
+        if(category.isEmpty()) {
+            throw new NoSuchCategoryExistsException("No category with id " + cateId + " found");
+        }
         return category.get();
     }
 

@@ -2,6 +2,7 @@ package motivation.com.motivation.Service;
 
 import motivation.com.motivation.DTO.DisplayQuoteDTO;
 import motivation.com.motivation.DTO.NotificationQuoteDTO;
+import motivation.com.motivation.Exceptions.*;
 import motivation.com.motivation.Model.*;
 import motivation.com.motivation.Repository.*;
 import org.modelmapper.ModelMapper;
@@ -48,6 +49,10 @@ public class QuoteService {
     }
 
     public UserQuote insertUserQuote(UserQuote quote) {
+        Optional<UserQuote> q = userQuoteRepository.findById(quote.getId());
+        if(q.isPresent()) {
+            throw new UserQuoteAlreadyExistsException("User quote with id " + quote.getId() + " already exists");
+        }
         return userQuoteRepository.save(quote);
     }
 
@@ -63,18 +68,24 @@ public class QuoteService {
 
     public UserQuote updateUserQuote(UserQuote quote, int quoteId) {
         Optional<UserQuote> q = userQuoteRepository.findById(quoteId);
-        //TODO: Implement when q is empty using exceptions
+        if(q.isEmpty()) {
+            throw new NoSuchUserQuoteExistsException("No user quote with id " + quoteId + " found");
+        }
         return userQuoteRepository.save(quote);
     }
 
     public void changeFavouriteQuote(DisplayQuoteDTO displayQuote, int userId) {
         if(!displayQuote.isUserCreated()) {
             Optional<User> u = userRepository.findById(userId);
-            //TODO: Implement exceptions
+            if(u.isEmpty()) {
+                throw new NoSuchUserExistsException("No user with id " + userId + " found");
+            }
             User user = u.get();
             boolean isFav = user.checkIsFavouriteQuote(displayQuote.getId());
             Optional<Quote> q = quoteRepository.findById(displayQuote.getId());
-            //TODO: Implement exceptions
+            if(q.isEmpty()) {
+                throw new NoSuchQuoteExistsException("No quote with id " + displayQuote.getId() + " found");
+            }
             Quote quote = q.get();
             if (isFav) {
                 user.removeFavouriteQuote(quote);
@@ -85,7 +96,9 @@ public class QuoteService {
             }
         } else {
             Optional<UserQuote> q = userQuoteRepository.findById(displayQuote.getId());
-            //TODO: Implement when q is empty using exceptions
+            if(q.isEmpty()) {
+                throw new NoSuchQuoteExistsException("No quote with id " + displayQuote.getId() + " found");
+            }
             UserQuote quote = q.get();
             quote.changeFavourite();
             userQuoteRepository.save(quote);
@@ -111,7 +124,9 @@ public class QuoteService {
     public List<DisplayQuoteDTO> getAllFavouriteQuotes(int userId) {
         List<DisplayQuoteDTO> favouriteList = new ArrayList<>();
         Optional<User> u = userRepository.findById(userId);
-        //TODO: Implement exceptions
+        if(u.isEmpty()) {
+            throw new NoSuchUserExistsException("No user with id " + userId + " found");
+        }
         User user = u.get();
         List<DisplayQuoteDTO> quoteList = user.getFavouriteQuotes().stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
         List<DisplayQuoteDTO> userQuoteList = userQuoteRepository.findByUserIdAndIsFavourite(userId, true).stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
@@ -122,7 +137,9 @@ public class QuoteService {
 
     public int getNumberOfFavourites(int userId) {
         Optional<User> u = userRepository.findById(userId);
-        //TODO: Implement exceptions
+        if(u.isEmpty()) {
+            throw new NoSuchUserExistsException("No user with id " + userId + " found");
+        }
         User user = u.get();
         int quoteListCount = user.getFavouriteQuotes().size();
         int userQuoteListCount = userQuoteRepository.countByUserIdAndIsFavourite(userId, true);
@@ -135,13 +152,17 @@ public class QuoteService {
 
     public Quote getQuoteFromId(int id) {
         Optional<Quote> q = quoteRepository.findById(id);
-        //TODO: Implement exception
+        if(q.isEmpty()) {
+            throw new NoSuchQuoteExistsException("No quote with id " + id + " found");
+        }
         return q.get();
     }
 
     public UserQuote getUserQuoteFromId(int id) {
         Optional<UserQuote> q = userQuoteRepository.findById(id);
-        //TODO: Implement exception
+        if(q.isEmpty()) {
+            throw new NoSuchUserQuoteExistsException("No user quote with id " + id + " found");
+        }
         return q.get();
     }
 
@@ -161,7 +182,9 @@ public class QuoteService {
 
     public List<DisplayQuoteDTO> getQuotesByUserCategory(int categoryId) {
         Optional<UserCategory> c = userCategoryRepository.findById(categoryId);
-        //TODO: Implement exceptions
+        if(c.isEmpty()) {
+            throw new NoSuchUserCategoryExistsException("No user category with id " + categoryId + " found");
+        }
         UserCategory userCategory = c.get();
         List<DisplayQuoteDTO> quotes = new ArrayList<>();
         List<DisplayQuoteDTO> quoteList = userCategory.getQuotes().stream().map(q -> this.modelMapper.map(q, DisplayQuoteDTO.class)).toList();
