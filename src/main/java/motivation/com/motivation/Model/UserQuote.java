@@ -27,7 +27,7 @@ public class UserQuote {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "quotes")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userQuotes")
     List<UserCategory> addedCategories;
 
     public int getId() {

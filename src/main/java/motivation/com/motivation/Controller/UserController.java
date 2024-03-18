@@ -30,4 +30,22 @@ public class UserController {
         User u = userService.updateUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(u);
     }
+
+    @PutMapping(path = "/updateName")
+    public ResponseEntity<String> changeName(@RequestParam int userId, @RequestParam String name) {
+        userService.updateName(userId, name);
+        return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+    }
+
+    @PutMapping(path = "/updateBackgroundId")
+    public ResponseEntity<String> changeBackgroundId(@RequestParam int userId, @RequestParam int backgroundId) {
+        userService.updateBackgroundId(userId, backgroundId);
+        return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+    }
+
+    @PutMapping(path = "/updateFontId")
+    public ResponseEntity<String> changeFontId(@RequestParam int userId, @RequestParam int fontId) {
+        userService.updateFontId(userId, fontId);
+        return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+    }
 }

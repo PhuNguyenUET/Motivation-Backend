@@ -24,4 +24,28 @@ public class UserService {
         // TODO: Implement exceptions
         return userRepository.save(user);
     }
+
+    public void updateName(int userId, String name) {
+        Optional<User> u = userRepository.findById(userId);
+        // TODO: Implement exceptions
+        User user = u.get();
+        user.setName(name);
+        userRepository.save(user);
+    }
+
+    public void updateBackgroundId(int userId, int backgroundId) {
+        Optional<User> u = userRepository.findById(userId);
+        // TODO: Implement exceptions
+        User user = u.get();
+        user.setBackgroundId(backgroundId);
+        userRepository.save(user);
+    }
+
+    public void updateFontId(int userId, int fontId) {
+        Optional<User> u = userRepository.findById(userId);
+        // TODO: Implement exceptions
+        User user = u.get();
+        user.setFontId(fontId);
+        userRepository.save(user);
+    }
 }

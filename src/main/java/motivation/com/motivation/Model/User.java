@@ -20,6 +20,11 @@ public class User {
     int id;
     @NotEmpty
     String name;
+
+    int backgroundId = 0;
+
+    int fontId = 0;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "favouriteQuotes",
@@ -27,6 +32,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "quoteId")
     )
     List<Quote> favouriteQuotes;
+
+    @OneToOne(mappedBy = "user")
+    NotificationInfo notificationInfo;
 
     public int getId() {
         return id;
@@ -36,8 +44,32 @@ public class User {
         return name;
     }
 
+    public int getBackgroundId() {
+        return backgroundId;
+    }
+
+    public int getFontId() {
+        return fontId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBackgroundId(int backgroundId) {
+        this.backgroundId = backgroundId;
+    }
+
+    public void setFontId(int fontId) {
+        this.fontId = fontId;
+    }
+
     public List<Quote> getFavouriteQuotes() {
         return favouriteQuotes;
+    }
+
+    public NotificationInfo getNotificationInfo() {
+        return notificationInfo;
     }
 
     public void addFavouriteQuote(Quote quote) {

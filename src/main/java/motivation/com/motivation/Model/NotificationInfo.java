@@ -17,8 +17,16 @@ public class NotificationInfo {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", referencedColumnName = "id")
     User user;
-    boolean notiAllowed;
-
+    boolean notiAllowed = false;
+    @ManyToOne
+    @JoinColumn(name = "categoryId", referencedColumnName = "id")
+    Category category;
+    boolean isGeneral = true;
+    String startTime = "8:00";
+    String endTime = "22:00";
+    int timeRepeated = 10;
+    String daysRepeated = "1,2,3,4,5,6,7";
+    int notiSoundId = 0;
     public int getId() {
         return id;
     }
@@ -58,14 +66,39 @@ public class NotificationInfo {
     public int getNotiSoundId() {
         return notiSoundId;
     }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "categoryId", referencedColumnName = "id")
-    Category category;
-    boolean isGeneral;
-    String startTime;
-    String endTime;
-    int timeRepeated;
-    String daysRepeated;
-    int notiSoundId;
+    public void changeNotiAllowed() {
+        this.notiAllowed = !this.notiAllowed;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setGeneral(boolean general) {
+        isGeneral = general;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setTimeRepeated(int timeRepeated) {
+        this.timeRepeated = timeRepeated;
+    }
+
+    public void setDaysRepeated(String daysRepeated) {
+        this.daysRepeated = daysRepeated;
+    }
+
+    public void setNotiSoundId(int notiSoundId) {
+        this.notiSoundId = notiSoundId;
+    }
 }
