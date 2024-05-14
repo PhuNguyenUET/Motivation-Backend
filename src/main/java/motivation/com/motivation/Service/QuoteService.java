@@ -71,6 +71,9 @@ public class QuoteService {
         if(q.isEmpty()) {
             throw new NoSuchUserQuoteExistsException("No user quote with id " + quoteId + " found");
         }
+
+        quote.setId(quoteId);
+
         return userQuoteRepository.save(quote);
     }
 

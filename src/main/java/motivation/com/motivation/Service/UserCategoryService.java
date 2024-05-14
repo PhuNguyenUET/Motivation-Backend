@@ -74,7 +74,8 @@ public class UserCategoryService {
             Optional<UserQuote> q = userQuoteRepository.findById(quoteDTO.getId());
             if(q.isEmpty()) {
                 throw new NoSuchQuoteExistsException("No quote with id " + quoteDTO.getId() + " found");
-            }            UserQuote quote = q.get();
+            }
+            UserQuote quote = q.get();
             userCategory.removeUserQuoteFromCategory(quote);
             userCategoryRepository.save(userCategory);
         }
@@ -125,6 +126,9 @@ public class UserCategoryService {
         if(u.isEmpty()) {
             throw new NoSuchUserCategoryExistsException("No user category with id " + userCategoryId + " found");
         }
+
+        userCategory.setId(userCategoryId);
+
         return userCategoryRepository.save(userCategory);
     }
 }
